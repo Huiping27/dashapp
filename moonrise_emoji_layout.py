@@ -8,6 +8,8 @@ import dash_bootstrap_components as dbc
 from dash.dependencies import Input, Output
 from dash.exceptions import PreventUpdate
 
+
+
 # Define the light purple color
 light_purple = '#B19CD9'
 
@@ -48,6 +50,8 @@ table = dash_table.DataTable(
 
 # initializing the app
 app =dash.Dash()
+
+server=app.server
 
 # Create dropdown button
 dropdown_button = dcc.Dropdown(
