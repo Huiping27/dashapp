@@ -8,8 +8,6 @@ import dash_bootstrap_components as dbc
 from dash.dependencies import Input, Output
 from dash.exceptions import PreventUpdate
 
-
-
 # Define the light purple color
 light_purple = '#B19CD9'
 
@@ -33,16 +31,14 @@ query = """
     SELECT date, city, moonrise_n
     FROM dbt_hli.moonrise_city
 """
-
 # Execute the query and load data into a DataFrame
 df = pd.read_sql(query, engine)
-
 
 # Create table with light purple header
 table = dash_table.DataTable(
     data=df.to_dict('records'),
     columns=[{"name": i, "id": i} for i in df.columns],
-    style_table={'overflowX': 'auto'},  # Horizontal scroll
+    style_table={'overflowY': 'scroll', 'height': '200px'},  # Smaller table
     style_header={'backgroundColor': light_purple, 'fontWeight': 'bold', 'fontFamily': 'monaco'},  # Light purple header
     style_cell={'textAlign': 'left', 'fontFamily': 'monaco'}  # Text alignment
 )
@@ -73,7 +69,8 @@ def update_graph(selected_city):
     city_df = df[df['city'] == selected_city]
     graph = dcc.Graph(
         figure=go.Figure(data=go.Bar(x=city_df['date'], y=city_df['moonrise_n'], marker_color=light_purple),
-                         layout={'title': f'Moonrise in {selected_city} by Date 🌙', 'font': {'family': 'monaco'}})
+                         layout={'title': f'Moonrise in {selected_city} by Date 🌙', 'font': {'family': 'monaco'}}),
+        style={'height': '80vh'}  # Bigger graph
     )
     return graph
 
@@ -96,10 +93,8 @@ author_info = html.Div([
 app.layout = html.Div(children=[
     html.H1(children='Moonrise over Hamburg, Shanghai, Bali 🌙', style={'textAlign': 'center', 'color': '#636EFA', 'fontFamily': 'monaco'}),
     html.Div([
-        table,
-        dropdown_button,
-        html.Div([download_button, dcc.Download(id="download-text")]),
-        html.Div(id='city-graph', style={'textAlign': 'center'})  # Centering the graph
+        html.Div([table, html.Div([download_button, dcc.Download(id="download-text")])], style={'width': '40%', 'display': 'inline-block'}),
+        html.Div([dropdown_button, html.Div(id='city-graph', style={'textAlign': 'center'})], style={'width': '60%', 'display': 'inline-block', 'verticalAlign': 'top'})
     ]),
     author_info
 ])
