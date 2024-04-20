@@ -34,6 +34,9 @@ query = """
 # Execute the query and load data into a DataFrame
 df = pd.read_sql(query, engine)
 
+# convert moonrise to dateitme
+df['moonrise_n'] = pd.to_datetime(df['moonrise_n'], format='%H:%M:%S')
+
 # Create table with light purple header
 table = dash_table.DataTable(
     data=df.to_dict('records'),
